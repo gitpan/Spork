@@ -1,7 +1,7 @@
 package Spork;
 use strict;
 use Spoon 0.12 '-base';
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 field const config_class => 'Spork::Config';
 

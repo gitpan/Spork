@@ -21,8 +21,9 @@ sub process {
 
 sub new_spork {
     my $self = shift;
+    my @files = io('.')->all;
     die "Can't make new spork in a non-empty directory\n"
-      if io('.')->all;
+      if @files;
     $self->use_class('slides');
     warn "Extracting sample slideshow: Spork.slides...\n";
     $self->slides->extract_files;

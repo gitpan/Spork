@@ -112,7 +112,7 @@ __slide.html__
 <small>continued...</small>
 [% END %]
 </div>
-[% INCLUDE BOTTOM.html %]
+[% INCLUDE bottom.html %]
 <!-- END slide.html -->
 __slide.css__
 /* BEGIN index.css */

@@ -77,6 +77,16 @@ MARKUP SYNTAX
         * Point Two
         * Point Three
 
+  Ordered List
+    Same as unordered lists except use zeroes to mark bullet points. Ordered
+    and unordered lists can be intermingled.
+
+        0 Point One
+        ** Point One A
+        ** Point One B
+        0 Point Two
+        0 Point Three
+
   Bold Text
     Sourround one or more words with asterisks to make the text bold.
 

@@ -11,6 +11,7 @@ requires(qw(
     IO::All 0.16
     Spiffy 0.15
     Spoon 0.12
+    Template 2.00
 ));
 
 clean_files('t/spork');
