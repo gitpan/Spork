@@ -251,5 +251,7 @@ function handleKey(e) {
 }
 
 document.onkeypress = handleKey
+[% IF mouse_controls -%]
 document.onclick = nextSlide
+[% END -%]
 // END controls.js

@@ -8,12 +8,15 @@ sub init {
 }
 
 const top_class => 'Spork::Formatter::Top';
+const class_prefix => 'Spork::Formatter::';
+const all_blocks => 
+  [qw(wafl_p table heading ul ol pre p)];
 const all_phrases => 
   [qw(wafl_phrase asis strong em u tt hyper)];
 
 sub formatter_classes {
-    map { "Spork::Formatter::$_" } qw(
-        WaflBlock WaflPhrase WaflParagraph
+    qw(
+        Spoon::Formatter::WaflPhrase WaflParagraph
         Heading Paragraph Preformatted 
         Ulist Olist Item
         Table TableRow TableCell
@@ -22,35 +25,19 @@ sub formatter_classes {
 }
 
 sub wafl_classes {
-    map { "Spork::Formatter::$_" } qw(
+    qw(
         Image File
     )
 };
 
 ################################################################################
-package Spork::Formatter::Block;
-use base 'Spoon::Formatter::Block';
-const contains_phrases => Spork::Formatter->all_phrases;
-
-################################################################################
-package Spork::Formatter::Phrase;
-use base 'Spoon::Formatter::Phrase';
-const all_phrases => Spork::Formatter->all_phrases;
-
-################################################################################
 package Spork::Formatter::Top;
-use base 'Spoon::Formatter::Unit';
+use base 'Spoon::Formatter::Container';
 const formatter_id => 'top';
-const contains_blocks => 
-      [qw(wafl_block wafl_p heading ul ol pre p)];
-
-################################################################################
-package Spork::Formatter::WaflBlock;
-use base 'Spoon::Formatter::WaflBlock';
 
 ################################################################################
 package Spork::Formatter::Heading;
-use base 'Spork::Formatter::Block';
+use base 'Spoon::Formatter::Block';
 const formatter_id => 'heading';
 field 'level'; 
 
@@ -72,7 +59,7 @@ sub to_html {
 
 ################################################################################
 package Spork::Formatter::Paragraph;
-use base 'Spork::Formatter::Block';
+use base 'Spoon::Formatter::Block';
 const formatter_id => 'p';
 const pattern_block => qr/((?:^[^\=\#\*\0\|\s].*\n|^[\*\/]+\S.*\n)+)/m;
 const html_start => "<p>\n";
@@ -89,7 +76,7 @@ const text_filter => "";
 
 ################################################################################
 package Spork::Formatter::List;
-use base 'Spoon::Formatter::Block';
+use base 'Spoon::Formatter::Container';
 const contains_blocks => [qw(li)];
 field 'level';
 field 'start_level';
@@ -161,7 +148,7 @@ const bullet => '0+\ +';
 
 ################################################################################
 package Spork::Formatter::Item;
-use base 'Spork::Formatter::Block';
+use base 'Spoon::Formatter::Block';
 const formatter_id => 'li';
 const html_start => "<li>";
 const html_end => "</li>\n";
@@ -176,7 +163,7 @@ sub match {
 
 ################################################################################
 package Spork::Formatter::Preformatted;
-use base 'Spoon::Formatter::Block';
+use base 'Spoon::Formatter::Unit';
 const formatter_id => 'pre';
 const html_start => "<pre>";
 const html_end => "</pre>\n";
@@ -204,7 +191,7 @@ sub text_filter {
 
 ################################################################################
 package Spork::Formatter::Table;
-use base 'Spoon::Formatter::Block';
+use base 'Spoon::Formatter::Container';
 const formatter_id => 'table';
 const contains_blocks => [qw(tr)];
 const pattern_block => qr/((^\|.*?\|\n)+)/sm;
@@ -213,7 +200,7 @@ const html_end => "</table>\n";
 
 ################################################################################
 package Spork::Formatter::TableRow;
-use base 'Spoon::Formatter::Block';
+use base 'Spoon::Formatter::Container';
 const formatter_id => 'tr';
 const contains_blocks => [qw(td)];
 const pattern_block => qr/(^\|.*?\|\n)/sm;
@@ -222,12 +209,12 @@ const html_end => "</tr>\n";
 
 ################################################################################
 package Spork::Formatter::TableCell;
-use base 'Spork::Formatter::Block';
+use base 'Spoon::Formatter::Unit';
 const formatter_id => 'td';
 field contains_blocks => [];
 field contains_phrases => [];
 const table_blocks => [qw(pre heading ol1 ul1 hr)];
-const table_phrases => Spork::Formatter->all_phrases;
+sub table_phrases { $self->hub->formatter->all_phrases }
 const html_start => "<td>";
 const html_end => "</td>\n";
 
@@ -251,7 +238,7 @@ sub match {
 # Phrase Classes
 ################################################################################
 package Spork::Formatter::Strong;
-use base 'Spork::Formatter::Phrase';
+use base 'Spoon::Formatter::Phrase';
 use Spork ':char_classes';
 const formatter_id => 'strong';
 const pattern_start => qr/(^|(?<=[^$ALPHANUM]))\*(?=\S)/;
@@ -261,7 +248,7 @@ const html_end => "</strong>";
 
 ################################################################################
 package Spork::Formatter::Emphasize;
-use base 'Spork::Formatter::Phrase';
+use base 'Spoon::Formatter::Phrase';
 use Spork ':char_classes';
 const formatter_id => 'em';
 const pattern_start => qr/(^|(?<=[^$ALPHANUM]))\/(?=\S[^\/]*\/(?=\W|\z))/;
@@ -271,7 +258,7 @@ const html_end => "</em>";
 
 ################################################################################
 package Spork::Formatter::Underline;
-use base 'Spork::Formatter::Phrase';
+use base 'Spoon::Formatter::Phrase';
 use Spork ':char_classes';
 const formatter_id => 'u';
 const pattern_start => qr/(^|(?<=[^$ALPHANUM]))_(?=\S)/;
@@ -281,10 +268,9 @@ const html_end => "</u>";
 
 ################################################################################
 package Spork::Formatter::Inline;
-use base 'Spoon::Formatter::Token';
+use base 'Spoon::Formatter::Unit';
 use Spork ':char_classes';
 const formatter_id => 'tt';
-const contains_phrases => [];
 const pattern_start => qr/(^|(?<=[^$ALPHANUM]))\|/;
 const pattern_end => qr/\|(?=[^$ALPHANUM]|\z)/;
 const html_start => "<tt>";
@@ -292,7 +278,7 @@ const html_end => "</tt>";
 
 ################################################################################
 package Spork::Formatter::HyperLink;
-use base 'Spoon::Formatter::Token';
+use base 'Spoon::Formatter::Unit';
 const formatter_id => 'hyper';
 our $pattern = qr/(?:https?|ftp)\:\/\/\S+/;
 const pattern_start => qr/$pattern|!$pattern/;
@@ -307,14 +293,10 @@ sub html {
 
 ################################################################################
 package Spork::Formatter::Asis;
-use base 'Spoon::Formatter::Token';
+use base 'Spoon::Formatter::Unit';
 const formatter_id => 'asis';
 const pattern_start => qr/\{\{/;
 const pattern_end => qr/\}\}/;
-
-################################################################################
-package Spork::Formatter::WaflPhrase;
-use base 'Spoon::Formatter::WaflPhrase';
 
 ################################################################################
 package Spork::Formatter::File;

@@ -8,9 +8,9 @@ version_from('lib/Spork.pm');
 
 requires(qw(
     perl 5.6.1
-    IO::All 0.16
-    Spiffy 0.15
-    Spoon 0.12
+    IO::All 0.21
+    Spiffy 0.16
+    Spoon 0.14
     Template 2.00
 ));
 

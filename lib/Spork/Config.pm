@@ -8,10 +8,10 @@ const class_id => 'config';
 
 sub default_configs {
     my @configs;
-    push @configs, "$ENV{HOME}/.sporkrc/config.yaml"
-      if defined $ENV{HOME} and -f "$ENV{HOME}/.sporkrc/config.yaml";
     push @configs, "config.yaml"
       if -f "config.yaml";
+    push @configs, "$ENV{HOME}/.sporkrc/config.yaml"
+      if defined $ENV{HOME} and -f "$ENV{HOME}/.sporkrc/config.yaml";
     return @configs;
 }
 
@@ -117,6 +117,12 @@ Text for link to previous page.
 A small image to put at the bottom of each slide. You can leave this value
 empty if you don't have a logo.
 
+=item * mouse_controls
+
+If this is turned off, clicking on the page will not advance the
+screen. This is useful if you like to use the mouse to hilight things
+on the page.
+
 =item * show_controls
 
 If this is turned off, the control links (previous, index, next) will not
@@ -179,6 +185,7 @@ copyright_string: Copyright &copy; 2004 Brian Ingerson
 
 banner_bgcolor: hotpink
 show_controls: 1
+mouse_controls: 1
 image_width: 350
 auto_scrolldown: 1
 logo_image: logo.png
