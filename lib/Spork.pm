@@ -1,7 +1,7 @@
 package Spork;
 use strict;
 use warnings;
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 use Spoon 0.13 '-base';
 
 const config_class => 'Spork::Config';
@@ -34,6 +34,13 @@ C<Spork.slides> (by default). Each slide is created using a minimal markup
 language similar to the syntax used in Kwiki wikis.
 
 =head1 MARKUP SYNTAX
+
+B<NOTE>: The current syntax has changed in a non-backwards-compatible way
+as of release 0.16. This was done to keep pace with current Kwiki
+formatting rules. The main change is the markup for images. Please
+update old slideshows accordingly.
+
+=head2 Slides
 
 Slides are separated by lines consisting entirely of four or more
 dashes. Each slide consists of text and markup. This section describes
@@ -137,7 +144,7 @@ width font.
 
 Each slide can display an image.
 
-    image<http://www.example.com/images/xyz123.png>
+    {image: http://www.example.com/images/xyz123.png}
 
 This will download a copy of the image if it hasn't been downloaded yet. That
 way you can view your slides offline. 
@@ -151,7 +158,7 @@ this image tag in the correct subpart.
 You can create a link to a local file. When clicked the file should appear in
 a new browser window.
 
-    file<mydir/myfile.txt>
+    {file: mydir/myfile.txt}
 
 The C<file_base> configuration setting will be prepended to relative paths.
 

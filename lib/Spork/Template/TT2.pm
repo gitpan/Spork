@@ -80,7 +80,7 @@ __index.html__
 <div id="content"><P>
 <ol>
 [% FOR slide = slides -%]
-<li> <a href="[% slide.slide_name %]">[% slide.slide_heading %]</a>
+<li><a href="[% slide.slide_name %]">[% slide.slide_heading %]</a></li>
 [% END -%]
 </ol>
 </div>

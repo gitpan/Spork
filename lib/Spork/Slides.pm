@@ -237,17 +237,17 @@ Putting a plus (+) at the start of a line creates a subslide effect.
 ----
 == Using Images
 * Hey Look. A picture!
-image<http://search.cpan.org/s/img/cpan_banner.png>
+{image: http://search.cpan.org/s/img/cpan_banner.png}
 +* Woah, it changed!
-image<http://cpan.org/misc/jpg/cpan.jpg>
+{image: http://cpan.org/misc/jpg/cpan.jpg}
 +* Images are cached locally
 ----
 == Linking to Files
 * Often Times You Want to Show a File
-* file<./Spork.slides This> is the Slide Show Text!
+* {file: ./Spork.slides This} is the Slide Show Text!
 * Just Write a Line Like This
 
-    * file<./Spork.slides This> is the Slide Show Text!
+    * {file: ./Spork.slides This} is the Slide Show Text!
 
 * For Relative Paths, Set This in the |config.yaml|
 

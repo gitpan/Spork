@@ -1,4 +1,10 @@
 ---
+version: 0.16
+date:    Thu May 20 13:23:33 PDT 2004
+changes:
+- Upgraded Formatter to latest Kwiki style
+- Include WAFL
+---
 version: 0.15
 date:    Fri May  7 02:19:20 PDT 2004
 changes:

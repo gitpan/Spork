@@ -21,4 +21,5 @@ META.yml
 README
 rebuild
 spork
+t/formatter1.t
 t/new.t
