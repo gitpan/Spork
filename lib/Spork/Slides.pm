@@ -3,9 +3,9 @@ use strict;
 use warnings;
 use Spork '-base';
 use Spoon::Installer '-base';
-use IO::All;
+require CGI;
 
-field const class_id => 'slides';
+const class_id => 'slides';
 field image_url => '';
 field slide_heading => '';
 field slide_index => [];

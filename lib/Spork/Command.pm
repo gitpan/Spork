@@ -1,17 +1,14 @@
 package Spork::Command;
 use strict;
 use warnings;
-use Spork '-base';
-use IO::All;
+use Spork '-Base';
 
 sub init {
-    my $self = shift;
     $self->use_class('config');
 }
 
 sub boolean_arguments { qw( -new -make -start) }
 sub process {
-    my $self = shift;
     my $args = $self->parse_arguments(@_);
     return $self->new_spork if $args->{-new};
     return $self->make_spork if $args->{-make};
@@ -20,7 +17,6 @@ sub process {
 }
 
 sub new_spork {
-    my $self = shift;
     my @files = io('.')->all;
     die "Can't make new spork in a non-empty directory\n"
       if @files;
@@ -33,7 +29,6 @@ sub new_spork {
 }
 
 sub make_spork {
-    my $self = shift;
     $self->use_class('template');
     unless (-e $self->template->extract_to) {
         warn "Extracting template files...\n";
@@ -46,7 +41,6 @@ sub make_spork {
 }
 
 sub start_spork {
-    my $self = shift;
     my $command = $self->config->start_command
       or die "No start_command in configuration";
     warn $command, "\n";

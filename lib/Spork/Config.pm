@@ -1,12 +1,12 @@
 package Spork::Config;
 use strict;
+use warnings;
 use Spoon::Config '-base';
 use Spoon::Installer '-base';
 
-field const class_id => 'config';
+const class_id => 'config';
 
 sub default_configs {
-    my $self = shift;
     my @configs;
     push @configs, "$ENV{HOME}/.sporkrc/config.yaml"
       if defined $ENV{HOME} and -f "$ENV{HOME}/.sporkrc/config.yaml";
@@ -31,7 +31,9 @@ sub default_config {
 }
 
 1;
+
 __DATA__
+
 =head1 NAME
 
 Spork::Config - Spork Configuration Class
@@ -155,6 +157,8 @@ This directory should be listed in C<template_path>.
 A list of template directories to be used by the template processing class.
 
 =back
+
+=cut
 
 __config.yaml__
 ################################################################################

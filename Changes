@@ -1,4 +1,15 @@
 ---
+version: 0.15
+date:    Fri May  7 02:19:20 PDT 2004
+changes:
+- Added =cut to Spork::Config
+- Integrated my Kwiki
+---
+version: 0.14
+date:    Wed Mar 31 23:02:59 CST 2004
+changes:
+- 0.13 was the unlucky release. Had a couple bugs.
+---
 version: 0.14
 date:    Wed Mar 31 23:02:59 CST 2004
 changes:

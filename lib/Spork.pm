@@ -1,9 +1,10 @@
 package Spork;
 use strict;
-use Spoon 0.12 '-base';
-our $VERSION = '0.14';
+use warnings;
+our $VERSION = '0.15';
+use Spoon 0.13 '-base';
 
-field const config_class => 'Spork::Config';
+const config_class => 'Spork::Config';
 
 1;
 

@@ -1,8 +1,9 @@
 package Spork::Formatter;
 use strict;
-use Spoon::Formatter '-base';
+use warnings;
+use Spoon::Formatter '-Base';
 
-field const top_class => 'Spork::Formatter::Top';
+const top_class => 'Spork::Formatter::Top';
 
 sub formatter_classes {
     map { "Spork::Formatter::$_" } qw(
@@ -18,18 +19,23 @@ sub formatter_classes {
 ################################################################################
 package Spork::Formatter::Top;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'top';
-field const contains_blocks => [qw(header p ul1 ol1 pre)];
+const formatter_id => 'top';
+const contains_blocks => [qw(header p ul1 ol1 pre)];
 
 ################################################################################
 package Spork::Formatter::Header;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'header';
-field const contains_phrases => [qw(b i u tt)];
+const formatter_id => 'header';
+const contains_phrases => [qw(b i u tt)];
 field 'level'; 
 
+sub match {
+    return unless $self->text =~ /^(={1,6}) (.*?)=*\s*\n+/m;
+    $self->level(length($1));
+    $self->set_match($2);
+}
+
 sub to_html {
-    my $self = shift;
     my $text = join '', map {
         ref $_ ? $_->to_html : $_
     } @{$self->units};
@@ -39,23 +45,15 @@ sub to_html {
     return "<h$level>$text</h$level>\n";
 }
 
-sub match {
-    my $self = shift;
-    return unless $self->text =~ /^(={1,6}) (.*?)=*\s*\n+/m;
-    $self->level(length($1));
-    $self->set_match($2);
-}
-
 ################################################################################
 package Spork::Formatter::Paragraph;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'p';
-field const html_start => "<p>\n";
-field const html_end => "</p>\n";
-field const contains_phrases => [qw(b i u tt hyper file image)];
+const formatter_id => 'p';
+const contains_phrases => [qw(b i u tt hyper file image)];
+const html_start => "<p>\n";
+const html_end => "</p>\n";
 
 sub match {
-    my $self = shift;
     return unless $self->text =~ /((?:^[^\=\#\*\0\s].*\n)+)/m;
     $self->set_match;
 }
@@ -63,13 +61,12 @@ sub match {
 ################################################################################
 package Spork::Formatter::Ulist;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'ul';
-field const html_start => "<ul>\n";
-field const html_end => "</ul>\n";
-field const level => 1;
+const formatter_id => 'ul';
+const html_start => "<ul>\n";
+const html_end => "</ul>\n";
+const level => 1;
 
 sub match {
-    my $self = shift;
     my $level = $self->level;
     return unless 
       $self->text =~ /((?:^\*{$level} .*\n)(?:^[*0 ]{$level,} .*\n)*)/m;
@@ -84,21 +81,20 @@ for my $level (1..4) {
     eval <<END; die $@ if $@;
 package Spork::Formatter::Ulist$level;
 use base 'Spork::Formatter::Ulist';
-field const formatter_id => 'ul$level';
-field const level => $level;
-field const contains_blocks => [qw($list)];
+const formatter_id => 'ul$level';
+const level => $level;
+const contains_blocks => [qw($list)];
 END
 }
 
 ################################################################################
 package Spork::Formatter::Olist;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'ol';
+const formatter_id => 'ol';
 field html_start => "<ol>\n";
 field html_end => "</ol>\n";
 
 sub match {
-    my $self = shift;
     my $level = $self->level;
     return unless 
       $self->text =~ /((?:^0{$level} .*\n)(?:^[\*0 ]{$level,} .*\n)*)/m;
@@ -113,21 +109,20 @@ for my $level (1..4) {
     eval <<END; die $@ if $@;
 package Spork::Formatter::Olist$level;
 use base 'Spork::Formatter::Olist';
-field const formatter_id => 'ol$level';
-field const level => $level;
-field const contains_blocks => [qw($list)];
+const formatter_id => 'ol$level';
+const level => $level;
+const contains_blocks => [qw($list)];
 END
 }
 
 ################################################################################
 package Spork::Formatter::Item;
 use base 'Spoon::Formatter::Unit';
-field const html_start => "<li>";
-field const html_end => "</li>\n";
-field const contains_phrases => [qw(hyper b i u tt hyper file image)];
+const html_start => "<li>";
+const html_end => "</li>\n";
+const contains_phrases => [qw(hyper b i u tt hyper file image)];
 
 sub match {
-    my $self = shift;
     my $level = $self->level;
     return unless 
       $self->text =~ /^[0\*]{$level} +(.*)\n/m;
@@ -139,18 +134,17 @@ for my $level (1..4) {
     eval <<END; die $@ if $@;
 package Spork::Formatter::Item$level;
 use base 'Spork::Formatter::Item';
-field const formatter_id => 'li$level';
-field const level => $level;
+const formatter_id => 'li$level';
+const level => $level;
 END
 }
 
 ################################################################################
 package Spork::Formatter::Preformatted;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'pre';
+const formatter_id => 'pre';
 
 sub match {
-    my $self = shift;
     return unless $self->text =~ /((?:^ +\S.*?\n|^\n)+)/m;
     my ($text, $start, $end) = ($1, $-[0], $+[0]);
     return unless $text =~ /\S/;
@@ -158,7 +152,6 @@ sub match {
 }
 
 sub to_html {
-    my $self = shift;
     my $formatted = join '', map {
         my $text = $_;
         $text =~ s/(?<=\n)\s*$//;
@@ -179,52 +172,51 @@ sub to_html {
 ################################################################################
 package Spork::Formatter::Bold;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'b';
-field const html_start => "<b>";
-field const html_end => "</b>";
-# field const contains_phrases => [qw(i u tt href mail wiki)];
-field const contains_phrases => [qw(i u tt)]; #XXX
-field const pattern_start => qr/(^|(?<=\s))\*(?=\S)/;
-field const pattern_end => qr/\*(?=\W|\z)/;
+const formatter_id => 'b';
+const html_start => "<b>";
+const html_end => "</b>";
+# const contains_phrases => [qw(i u tt href mail wiki)];
+const contains_phrases => [qw(i u tt)]; #XXX
+const pattern_start => qr/(^|(?<=\s))\*(?=\S)/;
+const pattern_end => qr/\*(?=\W|\z)/;
 
 ################################################################################
 package Spork::Formatter::Italic;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'i';
-field const html_start => "<i>";
-field const html_end => "</i>";
-field const contains_phrases => [qw(b u tt)];
-field const pattern_start => qr/(^|(?<=\s))\/(?=\S)/;
-field const pattern_end => qr/\/(?=\W|\z)/;
+const formatter_id => 'i';
+const html_start => "<i>";
+const html_end => "</i>";
+const contains_phrases => [qw(b u tt)];
+const pattern_start => qr/(^|(?<=\s))\/(?=\S)/;
+const pattern_end => qr/\/(?=\W|\z)/;
 
 ################################################################################
 package Spork::Formatter::Underline;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'u';
-field const html_start => "<u>";
-field const html_end => "</u>";
-# field const contains_phrases => [qw(b u tt href mail wiki)];
-field const contains_phrases => [qw(b i tt)]; #XXX
-field const pattern_start => qr/(^|(?<=\s))_(?=\S)/;
-field const pattern_end => qr/_(?=\W|\z)/;
+const formatter_id => 'u';
+const html_start => "<u>";
+const html_end => "</u>";
+# const contains_phrases => [qw(b u tt href mail wiki)];
+const contains_phrases => [qw(b i tt)]; #XXX
+const pattern_start => qr/(^|(?<=\s))_(?=\S)/;
+const pattern_end => qr/_(?=\W|\z)/;
 
 ################################################################################
 package Spork::Formatter::Inline;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'tt';
-field const html_start => qq{<tt style="font-size:13">};
-field const html_end => "</tt>";
-field const pattern_start => qr/(^|(?<=\s))\|(?=\S)/;
-field const pattern_end => qr/(?!<\\)\|(?=\W|\z)/;
+const formatter_id => 'tt';
+const html_start => qq{<tt style="font-size:13">};
+const html_end => "</tt>";
+const pattern_start => qr/(^|(?<=\s))\|(?=\S)/;
+const pattern_end => qr/(?!<\\)\|(?=\W|\z)/;
 
 ################################################################################
 package Spork::Formatter::HyperLink;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'hyper';
-field const pattern_start => qr/http:\/\/\S+/;
+const formatter_id => 'hyper';
+const pattern_start => qr/http:\/\/\S+/;
 
 sub html_start {
-    my $self = shift;
     '<a href="' . $self->matched . 
     '" target="external" style="text-decoration:underline">' . 
     $self->matched . '</a>';
@@ -233,14 +225,13 @@ sub html_start {
 ################################################################################
 package Spork::Formatter::File;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'file';
-field const pattern_start => qr/(^|(?<=\s))file</;
-field const pattern_end => qr/>/;
+const formatter_id => 'file';
+const pattern_start => qr/(^|(?<=\s))file</;
+const pattern_end => qr/>/;
 field 'link_file';
 field 'link_text';
 
 sub text_filter {
-    my $self = shift;
     my $text = shift;
     $text =~ s/(.*?)(?:\s+|\z)//;
     $self->link_file($1);
@@ -249,7 +240,6 @@ sub text_filter {
 }
 
 sub html_start {
-    my $self = shift;
     require Cwd;
     my $file = $self->link_file;
     $file = $self->hub->config->file_base . "/$file"
@@ -263,12 +253,11 @@ sub html_start {
 ################################################################################
 package Spork::Formatter::Image;
 use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'image';
-field const pattern_start => qr/(^|(?<=\s))image</;
-field const pattern_end => qr/>/;
+const formatter_id => 'image';
+const pattern_start => qr/(^|(?<=\s))image</;
+const pattern_end => qr/>/;
 
 sub to_html {
-    my $self = shift;
     $self->hub->slides->image_url($self->units->[0]);
     return '';
 }
