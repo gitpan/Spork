@@ -9,6 +9,8 @@ use File::Path;
 my $spork_dir = 't/spork';
 File::Path::rmtree($spork_dir);
 
+$SIG{__WARN__} = sub { };
+
 ok(mkdir($spork_dir));
 chdir($spork_dir) or die;
 Spork->new->load_hub->load_class('command')->process('-new');

@@ -2,7 +2,6 @@ package Spork::Slides;
 use strict;
 use warnings;
 use Spork '-base';
-use Spoon::Utils '-base';
 use Spoon::Installer '-base';
 use IO::All;
 
@@ -16,14 +15,6 @@ field top_config => {};
 sub init {
     my $self = shift;
     $self->use_class('config');
-}
-
-sub copy_files {
-    my $self = shift;
-    my $input_dir = $self->config->template_directory;
-    my $output_dir = $self->config->slides_directory;
-    $self->assert_directory($output_dir);
-    io("$input_dir/slide.css") > io("$output_dir/slide.css");
 }
 
 sub make_slides {
@@ -162,6 +153,7 @@ sub get_image_html {
     my $home = Cwd::cwd();
     chdir($images_directory) or die;
     my $method = $self->config->download_method . '_download';
+    warn "- Downloading $image_url\n";
     $self->$method($image_url, $image_file);
     chdir($home) or die;
     return -f "$images_directory/$image_file" ? $image_html : '';

@@ -9,19 +9,20 @@ __END__
 
 =head1 NAME
 
-spork - The 
+spork - The Spork Command Line Utility
 
 =head1 USAGE
 
-    > mkdir cgi-bin/my-kwiki
-    > cd cgi-bin/my-kwiki
-    > kwiki-install
-
-    Kwiki software installed! Point your browser at this location.
+    > mkdir my-slideshow
+    > cd my-slideshow
+    > spork -new
+    > spork -make
+    > spork -start
 
 =head1 DESCRIPTION
 
-CGI::Kwiki is a simple extendable wiki framework, written in Perl.
+Spork is a Perl module for creating standalone HTML slideshows from Kwiki
+markup.
 
 =head1 AUTHOR
 
@@ -29,7 +30,7 @@ Brian Ingerson <INGY@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003. Brian Ingerson. All rights reserved.
+Copyright (c) 2004. Brian Ingerson. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

@@ -16,4 +16,6 @@ requires(qw(
 clean_files('t/spork');
 install_script('spork');
 
+check_nmake();
+
 &WriteAll();

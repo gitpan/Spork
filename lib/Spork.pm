@@ -1,8 +1,7 @@
 package Spork;
 use strict;
 use Spoon 0.12 '-base';
-our $VERSION = '0.12';
-use IO::All;
+our $VERSION = '0.13';
 
 field const config_class => 'Spork::Config';
 
@@ -96,6 +95,17 @@ nesting level.
     ** Point One B
     * Point Two
     * Point Three
+
+=head2 Ordered List
+
+Same as unordered lists except use zeroes to mark bullet points. Ordered and
+unordered lists can be intermingled.
+
+    0 Point One
+    ** Point One A
+    ** Point One B
+    0 Point Two
+    0 Point Three
 
 =head2 Bold Text
 
