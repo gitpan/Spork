@@ -1,28 +1,22 @@
 package Spork::Template::TT2;
-use strict;
-use warnings;
-use Spoon::Template::TT2 '-base';
-use Spoon::Installer '-base';
+use Spoon::Template::TT2 -Base;
+use mixin 'Spoon::Installer';
 
 sub plugins { {} }
 
 sub extract_to {
-    my $self = shift;
     $self->hub->config->template_directory;
 }
 
 sub path {
-    my $self = shift;
     $self->hub->config->template_path || 
       [ $self->hub->config->template_directory ];
 }
 
-1;
 __DATA__
 __top.html__
-<!-- BEGIN top.html -->
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml11.dtd">
-<!-- BEGIN top.html -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>[% slide_heading %]</title>
@@ -53,9 +47,7 @@ __top.html__
 </tr>
 </table>
 </div>
-<!-- END top.html -->
 __bottom.html__
-<!-- BEGIN bottom.html -->
 <div id="bottombar">
 <table width="100%">
 <tr>
@@ -78,7 +70,7 @@ __bottom.html__
 </div>
 </body>
 </html>
-<!-- END bottom.html -->
+
 __index.html__
 [% INCLUDE top.html %]
 <div id="content">
@@ -90,9 +82,7 @@ __index.html__
 </ol>
 </div>
 [% INCLUDE bottom.html %]
-<!-- END index.html -->
 __start.html__
-<!-- BEGIN start.html -->
 [% INCLUDE top.html %]
 <div id="content">
 <div class="top_spacer"></div>
@@ -107,9 +97,7 @@ __start.html__
 </center>
 </div>
 [% INCLUDE bottom.html %]
-<!-- END start.html -->
 __slide.html__
-<!-- BEGIN slide.html -->
 [% INCLUDE top.html %]
 <div id="content">
 <div class="top_spacer"></div>
@@ -120,7 +108,6 @@ __slide.html__
 [% END %]
 </div>
 [% INCLUDE bottom.html %]
-<!-- END slide.html -->
 __slide.css__
 /* BEGIN index.css */
 hr {

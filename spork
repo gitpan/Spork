@@ -2,8 +2,9 @@
 use strict;
 use warnings;
 use Spork;
+our $VERSION = '0.19';
 
-Spork->new->load_hub->load_class('command')->process(@ARGV);
+Spork->new->load_hub->command->process(@ARGV);
 
 __END__
 

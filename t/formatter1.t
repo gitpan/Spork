@@ -3,7 +3,6 @@ use strict;
 use Test::More 'no_plan';
 use Spork;
 my $hub = Spork->new->debug->load_hub;
-$hub->load_class('formatter');
 
 my @tests = split /^%%%\n/m, join '', <DATA>;
 shift @tests;

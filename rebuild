@@ -12,5 +12,5 @@ die "Invalid spork directory '$spork_dir'\n"
 $spork_dir =~ s/\/+$//;
 
 my $hub = Spork->new->load_hub;
-$hub->load_class('template')->compress_files($spork_dir);
-$hub->load_class('slides')->compress_files($spork_dir);
+$hub->template->compress_files($spork_dir);
+$hub->slides->compress_files($spork_dir);

@@ -1,11 +1,5 @@
 package Spork::Command;
-use strict;
-use warnings;
-use Spork '-Base';
-
-sub init {
-    $self->use_class('config');
-}
+use Spork -Base;
 
 sub boolean_arguments { qw( -new -make -start) }
 sub process {
@@ -24,7 +18,7 @@ sub new_spork {
     warn "Extracting sample slideshow: Spork.slides...\n";
     $self->slides->extract_files;
     warn "Extracting sample configuration file: config.yaml...\n";
-    $self->config->extract_files;
+    $self->hub->config->extract_files;
     warn "Done. Now edit these files and run 'spork -make'.\n\n"
 }
 
@@ -35,6 +29,19 @@ sub make_spork {
         warn "Extracting template files...\n";
         $self->template->extract_files;
     }
+    {
+        use Cwd;
+        my $home = cwd;
+        chdir io->dir($self->hub->config->slides_directory)->assert->open->name;
+        my $kwiki_command = $self->hub->kwiki_command;
+        for my $class (@{$self->hub->config->plugin_classes}) {
+            eval "use $class; 1" or die $@;
+            my $class_id = $class->new->class_id;
+            $self->hub->config->add_config({"${class_id}_class" => $class});
+            $kwiki_command->install($class_id);
+        }
+        chdir $home;
+    }
     $self->use_class('slides');
     warn "Creating slides...\n";
     $self->slides->make_slides;
@@ -42,7 +49,7 @@ sub make_spork {
 }
 
 sub start_spork {
-    my $command = $self->config->start_command
+    my $command = $self->hub->config->start_command
       or die "No start_command in configuration";
     warn $command, "\n";
     exec $command;
@@ -58,10 +65,35 @@ END
 }
 
 sub assert_registry {
-    $self->hub->load_class('registry');
-    $self->hub->registry->update 
-      unless -f $self->hub->registry->registry_path;
-    $self->hub->registry->load;
+    use Kwiki::Plugin;
+    {
+        no warnings;
+        *Kwiki::Plugin::init = sub {};
+    }
+    $self->hub->registry->load_dynamic;
 }
 
-1;
+__END__
+
+=head1 NAME
+
+Spork::Command - Slide Presentations (Only Really Kwiki)
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Brian Ingerson <INGY@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2004, 2005. Brian Ingerson. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
+=cut

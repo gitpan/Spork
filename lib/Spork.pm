@@ -1,12 +1,12 @@
 package Spork;
-use strict;
-use warnings;
-our $VERSION = '0.18';
-use Spoon 0.15 '-base';
+our $VERSION = '0.19';
+use Spoon 0.21 -Base;
 
 const config_class => 'Spork::Config';
 
-1;
+sub load_hub {
+    super('config.yaml');
+}
 
 __END__
 
@@ -196,7 +196,7 @@ Brian Ingerson <INGY@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004. Brian Ingerson. All rights reserved.
+Copyright (c) 2004, 2005. Brian Ingerson. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

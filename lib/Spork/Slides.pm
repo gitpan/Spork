@@ -1,8 +1,6 @@
 package Spork::Slides;
-use strict;
-use warnings;
-use Spork '-base';
-use Spoon::Installer '-base';
+use Spork -Base;
+use mixin 'Spoon::Installer';
 require CGI;
 
 const class_id => 'slides';
@@ -13,12 +11,10 @@ field 'first_slide';
 field top_config => {};
 
 sub init {
-    my $self = shift;
     $self->use_class('config');
 }
 
 sub make_slides {
-    my $self = shift;
     $self->use_class('formatter');
     $self->use_class('template');
     
@@ -59,7 +55,6 @@ sub make_slides {
 }
 
 sub make_link {
-    my $self = shift;
     my $link = shift;
     return $link unless $self->config->auto_scrolldown;
     return $link if $link =~ /^slide\d+a?\.html$/;
@@ -67,7 +62,6 @@ sub make_link {
 }
 
 sub make_index {
-    my $self = shift;
     my $output = $self->template->process('index.html',
         %{$self->top_config},
         slides => $self->slide_index,
@@ -79,7 +73,6 @@ sub make_index {
 }
 
 sub make_start {
-    my $self = shift;
     my $output = $self->template->process('start.html',
         spork_version => "Spork v$Spork::VERSION",
         index_slide => 'index.html',
@@ -89,12 +82,10 @@ sub make_start {
 }
 
 sub start_name {
-    my $self = shift;
     $self->config->slides_directory . '/start.html';
 }
 
 sub split_slides {
-    my $self = shift;
     my $slides_file = shift;
     my @slide_info;
     my @slides = grep $_, split /^-{4,}\s*\n/m, io($slides_file)->slurp;
@@ -126,7 +117,6 @@ sub split_slides {
 }
 
 sub sub_slides {
-    my $self = shift;
     my $raw_slide = shift;
     my (@slides, $slide);
     for (split /^\+/m, $raw_slide) {
@@ -136,7 +126,6 @@ sub sub_slides {
 }
 
 sub get_image_html {
-    my $self = shift;
     my $image_url = $self->image_url
       or return '';
     my $image_width;
@@ -160,25 +149,45 @@ sub get_image_html {
 }
 
 sub wget_download {
-    my $self = shift;
     my ($image_url, $image_file) = @_;
     system "wget $image_url 2> /dev/null";
 }
 
 sub curl_download {
-    my $self = shift;
     my ($image_url, $image_file) = @_;
     system "curl -o $image_file $image_url 2> /dev/null";
 }
 
 sub lwp_download {
-    my $self = shift;
     my ($image_url, $image_file) = @_;
     system "lwp-download $image_url > /dev/null";
 }
 
-1;
 __DATA__
+
+=head1 NAME
+
+Spork::Slides - Slide Presentations (Only Really Kwiki)
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Brian Ingerson <INGY@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2004, 2005. Brian Ingerson. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
+=cut
+
 __Spork.slides__
 ----
 presentation_topic: Spork
@@ -212,14 +221,13 @@ show_controls: 0
 == Moving About
 * To Advance Slide:
 ** Click /Next/ or Click Mouse or
-** Hit /Enter/ or /n/ or /ctl-n/ or /spacebar/
+** Hit /Enter/ or /ctl-n/ or /spacebar/
 * To Move Backwards:
 ** Click /Previous/ or
-** Hit /Delete/ or /p/ or /ctl-p/
+** Hit /Delete/ or /ctl-p/
 * Other Movements
-** Starting Slide - /s/ or /ctl-s/
-** Index Slide - /i/ or /ctl-s/
-** Quit - /Q/
+** Starting Slide - /ctl-s/
+** Index Slide - /ctl-i/
 * Notice The Control Links Have Disappeared
 ----
 == Creating Slides
@@ -248,6 +256,8 @@ Putting a plus (+) at the start of a line creates a subslide effect.
 * Just Write a Line Like This
 
     * {file: ./Spork.slides This} is the Slide Show Text!
+
+* {file: ./Spork.slides This} is the Slide Show Text!
 
 * For Relative Paths, Set This in the |config.yaml|
 

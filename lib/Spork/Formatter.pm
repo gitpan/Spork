@@ -1,19 +1,26 @@
 package Spork::Formatter;
-use strict;
-use warnings;
-use Kwiki::Formatter '-Base';
-
-sub init {
-    $self->hub->load_class('slides');
-}
+use Kwiki::Formatter -Base;
 
 sub formatter_classes {
-    map { s/^Heading$/Spork::Formatter::Heading/; $_ } super;
+    (
+        (map { s/^Heading$/Spork::Formatter::Heading/; $_ } super),
+        'Spork::Formatter::Inline',
+    );
 }  
 
-const all_phrases => [qw(wafl_phrase asis strong em u tt hyper)];
+const all_phrases => [qw(wafl_phrase asis strong em u tt tt2 hyper)];
 
 sub wafl_classes { qw( Spork::Formatter::Image Spork::Formatter::File) }
+
+################################################################################
+package Spork::Formatter::Inline;
+use base 'Spoon::Formatter::Unit';
+use Kwiki ':char_classes';
+const formatter_id => 'tt2';
+const pattern_start => qr/(^|(?<=[^$ALPHANUM]))\|/;
+const pattern_end => qr/\|(?=[^$ALPHANUM]|\z)/;
+const html_start => "<tt>";
+const html_end => "</tt>";
 
 ################################################################################
 package Spork::Formatter::Heading;
@@ -56,4 +63,27 @@ sub to_html {
     return '';
 }
 
-1;
+__END__
+
+=head1 NAME
+
+Spork::Formatter - Slide Presentations (Only Really Kwiki)
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head1 AUTHOR
+
+Brian Ingerson <INGY@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2004, 2005. Brian Ingerson. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
+=cut

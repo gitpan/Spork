@@ -1,8 +1,6 @@
 package Spork::Config;
-use strict;
-use warnings;
-use Kwiki::Config '-base';
-use Spoon::Installer '-base';
+use Kwiki::Config -base;
+use mixin 'Spoon::Installer';
 
 const class_id => 'config';
 
@@ -39,10 +37,9 @@ sub default_classes {
         css_class => 'Kwiki::CSS',
         javascript_class => 'Kwiki::Javascript',
         cache_class => 'Kwiki::Cache',
+        kwiki_command_class => 'Kwiki::Command',
     )
 }
-
-1;
 
 __DATA__
 
@@ -176,6 +173,19 @@ A list of template directories to be used by the template processing class.
 
 =back
 
+=head1 AUTHOR
+
+Brian Ingerson <INGY@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2004, 2005. Brian Ingerson. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
 =cut
 
 __config.yaml__
@@ -197,7 +207,7 @@ copyright_string: Copyright &copy; 2004 Brian Ingerson
 
 banner_bgcolor: hotpink
 show_controls: 1
-mouse_controls: 1
+mouse_controls: 0
 image_width: 350
 auto_scrolldown: 1
 logo_image: logo.png

@@ -2,6 +2,7 @@ use Cwd qw(abs_path);
 use lib abs_path('t'), abs_path('lib');
 use strict;
 use warnings;
+use diagnostics;
 use Test::More tests => 3;
 use Spork;
 use File::Path;
@@ -13,10 +14,10 @@ $SIG{__WARN__} = sub { };
 
 ok(mkdir($spork_dir));
 chdir($spork_dir) or die;
-Spork->new->load_hub->load_class('command')->process('-new');
+Spork->new->load_hub->command->process('-new');
 
 ok(-f 'Spork.slides');
 
-Spork->new->load_hub->load_class('command')->process('-make');
+Spork->new->load_hub->command->process('-make');
 
 ok(-f 'slides/index.html');
