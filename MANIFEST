@@ -11,14 +11,14 @@ inc/Module/Install/WriteAll.pm
 lib/Spork.pm
 lib/Spork/Command.pm
 lib/Spork/Config.pm
-lib/Spork/Files.pm
 lib/Spork/Formatter.pm
 lib/Spork/Hub.pm
 lib/Spork/Slides.pm
-lib/Spork/Template.pm
+lib/Spork/Template/TT2.pm
 Makefile.PL
 MANIFEST			This list of files
 META.yml
 README
+rebuild
 spork
 t/new.t

@@ -1,85 +1,38 @@
 package Spork::Formatter;
 use strict;
 use Spoon::Formatter '-base';
-use constant LIST_MAX => 7;
 
 field const top_class => 'Spork::Formatter::Top';
 
-sub register {
-    my $self = shift;
-    $self->register(formatter => 'Spork::Formatter::Line');
-    $self->register(formatter => 'Spork::Formatter::Header');
-    # etc
-}
-
-# XXX This table method is just temporary until the above registry works
-sub table {             
-    my $self = shift;
-    $self->{table} ||= do {
-        my %table = map {
-            my $class = "Spork::Formatter::$_";
-            $class->can('formatter_id') ? ($class->formatter_id, $class) : ();
-        } qw(
-            Line Header Paragraph Preformatted Table Comment Image
-            Ulist1 Ulist2 Ulist3 Ulist4 Ulist5 Ulist6 Ulist7
-            Olist1 Olist2 Olist3 Olist4 Olist5 Olist6 Olist7
-            Item1 Item2 Item3 Item4 Item5 Item6 Item7
-            Bold Italic Underline Inline
-        );
-        \ %table;
-    };
+sub formatter_classes {
+    map { "Spork::Formatter::$_" } qw(
+        Header Paragraph Preformatted
+        Ulist1 Ulist2 Ulist3 Ulist4
+        Olist1 Olist2 Olist3 Olist4
+        Item1 Item2 Item3 Item4
+        Bold Italic Underline Inline 
+        HyperLink File Image
+    );
 }
 
 ################################################################################
 package Spork::Formatter::Top;
 use base 'Spoon::Formatter::Unit';
 field const formatter_id => 'top';
-field const html_start => '';
-field const html_end => '';
-field const contains_blocks => [qw(hr img header p ul1 ol1 pre table)];
-
-################################################################################
-package Spork::Formatter::Image;
-use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'img';
-field 'url';
-
-sub match {
-    my $self = shift;
-    return unless $self->text =~ /^<\s*(.*)\s*>\n/m;
-    $self->set_match;
-}
-
-sub to_html {
-    my $self = shift;
-    $self->hub->slides->image_url($self->units->[0]);
-    return '';
-}
-
-################################################################################
-package Spork::Formatter::Line;
-use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'hr';
-field const html_start => "<hr />\n";
-field const html_end => '';
-
-sub match {
-    my $self = shift;
-    return unless $self->text =~ /^----+\s*\n/m;
-    $self->set_match;
-}
+field const contains_blocks => [qw(header p ul1 ol1 pre)];
 
 ################################################################################
 package Spork::Formatter::Header;
 use base 'Spoon::Formatter::Unit';
 field const formatter_id => 'header';
-# field const contains_phrases => [qw(b i u tt href mail wiki)];
-field const contains_phrases => [qw(b i)]; #XXX
+field const contains_phrases => [qw(b i u tt)];
 field 'level'; 
 
 sub to_html {
     my $self = shift;
-    my $text = $self->units->[0];
+    my $text = join '', map {
+        ref $_ ? $_->to_html : $_
+    } @{$self->units};
     my $level = $self->level;
     $self->hub->slides->slide_heading($text)
       unless $self->hub->slides->slide_heading;
@@ -99,8 +52,7 @@ use base 'Spoon::Formatter::Unit';
 field const formatter_id => 'p';
 field const html_start => "<p>\n";
 field const html_end => "</p>\n";
-# field const contains_phrases => [qw(b i u tt href mail wiki)];
-field const contains_phrases => [qw(b i u tt)]; #XXX
+field const contains_phrases => [qw(b i u tt hyper file image)];
 
 sub match {
     my $self = shift;
@@ -125,8 +77,8 @@ sub match {
 }
 
 ################################################################################
-for my $level (1..Spork::Formatter::LIST_MAX) {
-    my $list = join ' ', $level != Spork::Formatter::LIST_MAX 
+for my $level (1..4) {
+    my $list = join ' ', $level != 4 
     ? ("ul" . ($level + 1), "ol" . ($level + 1), "li$level")
     : ("li$level");
     eval <<END; die $@ if $@;
@@ -154,8 +106,8 @@ sub match {
 }
 
 ################################################################################
-for my $level (1..Spork::Formatter::LIST_MAX) {
-    my $list = join ' ', $level != Spork::Formatter::LIST_MAX 
+for my $level (1..4) {
+    my $list = join ' ', $level != 4 
     ? ("ol" . ($level + 1), "ul" . ($level + 1), "li$level")
     : ("li$level");
     eval <<END; die $@ if $@;
@@ -172,7 +124,7 @@ package Spork::Formatter::Item;
 use base 'Spoon::Formatter::Unit';
 field const html_start => "<li>";
 field const html_end => "</li>\n";
-field const contains_phrases => [qw(b i u tt)];
+field const contains_phrases => [qw(hyper b i u tt hyper file image)];
 
 sub match {
     my $self = shift;
@@ -183,7 +135,7 @@ sub match {
 }
 
 ################################################################################
-for my $level (1..Spork::Formatter::LIST_MAX) {
+for my $level (1..4) {
     eval <<END; die $@ if $@;
 package Spork::Formatter::Item$level;
 use base 'Spork::Formatter::Item';
@@ -219,20 +171,7 @@ sub to_html {
         $text =~ s/^ {$indent}//gm;
         $self->escape_html($text);
     } @{$self->units};
-    "<blockquote>\n<pre>$formatted</pre>\n</blockquote>\n";
-}
-
-################################################################################
-package Spork::Formatter::Table;
-use base 'Spoon::Formatter::Unit';
-field const formatter_id => 'table';
-field const html_start => '<p>';
-field const html_end => '</p>';
-
-sub match {
-    my $self = shift;
-    return unless $self->text =~ /^<####>/m;
-    $self->set_match;
+    qq{<blockquote>\n<pre style="font-size:13">$formatted</pre>\n</blockquote>\n};
 }
 
 ################################################################################
@@ -254,8 +193,7 @@ use base 'Spoon::Formatter::Unit';
 field const formatter_id => 'i';
 field const html_start => "<i>";
 field const html_end => "</i>";
-# field const contains_phrases => [qw(b u tt href mail wiki)];
-field const contains_phrases => [qw(b u tt)]; #XXX
+field const contains_phrases => [qw(b u tt)];
 field const pattern_start => qr/(^|(?<=\s))\/(?=\S)/;
 field const pattern_end => qr/\/(?=\W|\z)/;
 
@@ -274,10 +212,65 @@ field const pattern_end => qr/_(?=\W|\z)/;
 package Spork::Formatter::Inline;
 use base 'Spoon::Formatter::Unit';
 field const formatter_id => 'tt';
-field const html_start => "<tt>";
+field const html_start => qq{<tt style="font-size:13">};
 field const html_end => "</tt>";
-field const contains_phrases => [];
 field const pattern_start => qr/(^|(?<=\s))\|(?=\S)/;
-field const pattern_end => qr/\|(?=\W|\z)/;
+field const pattern_end => qr/(?!<\\)\|(?=\W|\z)/;
+
+################################################################################
+package Spork::Formatter::HyperLink;
+use base 'Spoon::Formatter::Unit';
+field const formatter_id => 'hyper';
+field const pattern_start => qr/http:\/\/\S+/;
+
+sub html_start {
+    my $self = shift;
+    '<a href="' . $self->matched . 
+    '" target="external" style="text-decoration:underline">' . 
+    $self->matched . '</a>';
+}
+
+################################################################################
+package Spork::Formatter::File;
+use base 'Spoon::Formatter::Unit';
+field const formatter_id => 'file';
+field const pattern_start => qr/(^|(?<=\s))file</;
+field const pattern_end => qr/>/;
+field 'link_file';
+field 'link_text';
+
+sub text_filter {
+    my $self = shift;
+    my $text = shift;
+    $text =~ s/(.*?)(?:\s+|\z)//;
+    $self->link_file($1);
+    $self->link_text($text || $self->link_file);
+    return '';
+}
+
+sub html_start {
+    my $self = shift;
+    require Cwd;
+    my $file = $self->link_file;
+    $file = $self->hub->config->file_base . "/$file"
+      unless $file =~ /^\.{0,1}\//;
+    $file = Cwd::abs_path($file);
+    qq{<a href="file://$file" } . 
+      'target="file" style="text-decoration:underline">' . 
+      $self->link_text . '</a>';
+}
+
+################################################################################
+package Spork::Formatter::Image;
+use base 'Spoon::Formatter::Unit';
+field const formatter_id => 'image';
+field const pattern_start => qr/(^|(?<=\s))image</;
+field const pattern_end => qr/>/;
+
+sub to_html {
+    my $self = shift;
+    $self->hub->slides->image_url($self->units->[0]);
+    return '';
+}
 
 1;

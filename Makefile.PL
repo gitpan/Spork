@@ -10,7 +10,7 @@ requires(qw(
     perl 5.6.1
     IO::All 0.16
     Spiffy 0.15
-    Spoon 0.11
+    Spoon 0.12
 ));
 
 clean_files('t/spork');

@@ -1,3 +1,30 @@
+---
+version: 0.12
+date:    Wed Mar 31 00:07:36 CST 2004
+changes:
+- Add a config, anywhere a slide could be.
+- Support ~/.sporkrc/config.yaml
+- Expand templates on |spork -make| unless template directory exists
+- Change to image<...>
+- Add auto_scrolldown
+- Javascript controls
+- Accesskey controls
+- Make control_links an option
+- Make title be a link to start
+- Add download_method: wget (lwp, curl)
+- Spoon::Config->add_config($hash_ref)
+- Upgrade documentation
+- Upgrade sample slideshow
+- Remove '#' from start and index slide
+- Change 'template' to 'template/tt2'
+- i18n-ize
+- Add character_encoding
+----
+== Crazy Ideas
+* Generate a Wiki when slides are made
+** Auto signin for audience
+** Take audience questions through the wiki
+---
 version: 0.11
 date:    Tue Mar 23 00:23:46 PST 2004
 changes:
