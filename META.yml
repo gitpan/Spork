@@ -1,5 +1,5 @@
 name: Spork
-version: 0.10
+version: 0.11
 abstract: Slide Presentations (Only Really Kwiki)
 author: Brian Ingerson <ingy@cpan.org>
 license: perl
@@ -12,4 +12,4 @@ requires:
 no_index:
   directory:
     - inc
-generated_by: Module::Install version 0.31
+generated_by: Module::Install version 0.33

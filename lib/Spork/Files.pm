@@ -127,7 +127,7 @@ __template/slide.html__
 <small>continued...</small>
 [% END %]
 </div>
-[% INCLUDE BOTTOM.html %]
+[% INCLUDE bottom.html %]
 __template/slide.css__
 hr {
     color: #202040;
