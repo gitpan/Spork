@@ -29,6 +29,7 @@ sub new_spork {
 }
 
 sub make_spork {
+    $self->assert_registry;
     $self->use_class('template');
     unless (-e $self->template->extract_to) {
         warn "Extracting template files...\n";
@@ -54,6 +55,13 @@ usage:
   spork -make                 # Turn the text into html slides
   spork -start                # Start the show in a browser
 END
+}
+
+sub assert_registry {
+    $self->hub->load_class('registry');
+    $self->hub->registry->update 
+      unless -f $self->hub->registry->registry_path;
+    $self->hub->registry->load;
 }
 
 1;

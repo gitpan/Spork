@@ -11,7 +11,7 @@ sub extract_to {
     $self->hub->config->template_directory;
 }
 
-sub include_path {
+sub path {
     my $self = shift;
     $self->hub->config->template_path || 
       [ $self->hub->config->template_directory ];
@@ -20,30 +20,34 @@ sub include_path {
 1;
 __DATA__
 __top.html__
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!-- BEGIN top.html -->
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml11.dtd">
+<!-- BEGIN top.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>[% slide_heading %]</title>
-<meta name="Content-Type" content="text/html; charset=[% character_encoding %]">
-<meta name="generator" content="[% spork_version %]">
-<link rel='icon' HREF='favicon.png'>
-<style><!--
+<meta name="Content-Type" content="text/html; charset=[% character_encoding %]" />
+<meta name="generator" content="[% spork_version %]" />
+<link rel='icon' href='favicon.png' />
+[% FOR css_file = hub.css.files -%]
+  <link rel="stylesheet" type="text/css" href="[% css_file %]" />
+[% END -%]
+<style type="text/css"><!--
 [% INCLUDE slide.css %]
 --></style>
-<script>
+<script type="text/javascript">
 [% INCLUDE controls.js %]
 </script>
 </head>
-<body bgcolor="#ffffff" background="[% background_image %]">
+<body>
 <div id="topbar">
 <table width='100%'>
 <tr>
 <td width="13%">[% presentation_topic %]</td>
-<td align=center width="73%">
+<td align="center" width="73%">
     <a accesskey="s" href="start.html">[% presentation_title %]</a>
 </td>
-<td align=right width="13%">
+<td align="right" width="13%">
     [% slide_num ? "#$slide_num" : '&nbsp;' %]
 </td>
 </tr>
@@ -68,16 +72,17 @@ __bottom.html__
 </tr>
 </table>
 </div> 
-<a name="end"></a>
 <div id="logo"></div>
-<div id="spacer"></div>
+<div class="spacer">
+<a name="end"></a>
+</div>
 </body>
 </html>
 <!-- END bottom.html -->
 __index.html__
-<!-- BEGIN index.html -->
 [% INCLUDE top.html %]
-<div id="content"><P>
+<div id="content">
+<div class="top_spacer"></div>
 <ol>
 [% FOR slide = slides -%]
 <li><a href="[% slide.slide_name %]">[% slide.slide_heading %]</a></li>
@@ -89,7 +94,8 @@ __index.html__
 __start.html__
 <!-- BEGIN start.html -->
 [% INCLUDE top.html %]
-<div id="content"><P>
+<div id="content">
+<div class="top_spacer"></div>
 <center>
 <h4>[% presentation_title %]</h4>
 <p />
@@ -105,7 +111,8 @@ __start.html__
 __slide.html__
 <!-- BEGIN slide.html -->
 [% INCLUDE top.html %]
-<div id="content"><P>
+<div id="content">
+<div class="top_spacer"></div>
 [% image_html %]
 [% slide_content -%]
 [%- UNLESS last -%]
@@ -178,7 +185,13 @@ small {
     z-index: 0;
 }
 
-#spacer {
+.top_spacer {
+    height: 0px;
+    margin: 0px 0px 0px 0px;
+    padding: 1px 0px 0px 0px;
+}
+
+.spacer {
     bottom: 5px;
     height: 50px;
 }

@@ -81,8 +81,8 @@ Paragraph two.
 <><><>
 <p>
 Paragraph one.
-</p>
 
+</p>
 <p>
 Paragraph two.
 </p>
@@ -93,8 +93,8 @@ This is not
 <><><>
 <p>
 This is <strong>bold</strong>
-</p>
 
+</p>
 <p>
 This is not
 </p>

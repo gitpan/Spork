@@ -13,6 +13,7 @@ lib/Spork/Command.pm
 lib/Spork/Config.pm
 lib/Spork/Formatter.pm
 lib/Spork/Hub.pm
+lib/Spork/Registry.pm
 lib/Spork/Slides.pm
 lib/Spork/Template/TT2.pm
 Makefile.PL

@@ -1,7 +1,7 @@
 package Spork::Config;
 use strict;
 use warnings;
-use Spoon::Config '-base';
+use Kwiki::Config '-base';
 use Spoon::Installer '-base';
 
 const class_id => 'config';
@@ -16,18 +16,30 @@ sub default_configs {
 }
 
 sub default_config {
-    {
+    my $config = super;
+    $config->{slides_file} = 'Spork.slides';
+    $config->{template_directory} = 'template/tt2';
+    $config->{template_path} = [ 'template/tt2' ];
+    return $config;
+}
+
+sub default_classes {
+    (
         config_class => 'Spork::Config',
+        registry_class => 'Spork::Registry',
         hub_class => 'Spork::Hub',
         formatter_class => 'Spork::Formatter',
         template_class => 'Spork::Template::TT2',
         command_class => 'Spork::Command',
         slides_class => 'Spork::Slides',
-
-        slides_file => 'Spork.slides',
-        template_directory => 'template/tt2',
-        template_path => [ 'template/tt2' ],
-    }
+        # For Kwiki Plugins:
+        cgi_class => 'Kwiki::CGI',
+        pages_class => 'Kwiki::Pages',
+        preferences_class => 'Kwiki::Preferences',
+        css_class => 'Kwiki::CSS',
+        javascript_class => 'Kwiki::Javascript',
+        cache_class => 'Kwiki::Cache',
+    )
 }
 
 1;
@@ -206,3 +218,6 @@ start_command: open slides/start.html
 
 template_class: Spork::Template::TT2
 formatter_class: Spork::Formatter
+
+# plugin_classes:
+# - Kwiki::PerlMode

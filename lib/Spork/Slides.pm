@@ -22,7 +22,6 @@ sub make_slides {
     $self->use_class('formatter');
     $self->use_class('template');
     
-    $self->assert_directory($self->config->slides_directory);
     my @slides = $self->split_slides($self->config->slides_file);
     $self->first_slide($slides[0]);
     $self->config->add_config($slides[0]->{config});
@@ -45,13 +44,14 @@ sub make_slides {
         $slide->{image_html} = $self->get_image_html;
         my $output = $self->template->process('slide.html',
             %$slide,
+            hub => $self->hub,
             index_slide => 'index.html',
             slide_content => $html,
             spork_version => "Spork v$Spork::VERSION",
         );
         my $file_name = $self->config->slides_directory . '/' . 
                         $slide->{slide_name};
-        $output > io($file_name);
+        $output > io($file_name)->assert;
         push @{$self->slide_index}, $slide
           if $slide->{slide_name} =~ /^slide\d+a?\.html$/;
     }
@@ -75,7 +75,7 @@ sub make_index {
         next_slide => 'start.html',
     );
     my $file_name = $self->config->slides_directory . '/index.html';
-    $output > io($file_name);
+    $output > io($file_name)->assert;
 }
 
 sub make_start {
@@ -85,7 +85,7 @@ sub make_start {
         index_slide => 'index.html',
         next_slide => $self->first_slide->{slide_name},
     );
-    $output > io($self->start_name);
+    $output > io($self->start_name)->assert;
 }
 
 sub start_name {
@@ -145,7 +145,7 @@ sub get_image_html {
     my $image_file = $image_url;
     $image_file =~ s/.*\///;
     my $images_directory = $self->config->slides_directory . '/images';
-    $self->assert_directory($images_directory);
+    io->dir($images_directory)->assert->open;
     my $image_html =
       qq{<img name="img" id="img" width="$image_width" src="images/$image_file" align=right>};
     return $image_html if -f "$images_directory/$image_file";

@@ -1,14 +1,13 @@
 name: Spork
-version: 0.17
+version: 0.18
 abstract: Slide Presentations (Only Really Kwiki)
 author: Brian Ingerson <ingy@cpan.org>
 license: perl
 distribution_type: module
 requires:
   perl: 5.6.1
-  IO::All: 0.21
-  Spiffy: 0.16
-  Spoon: 0.14
+  Spoon: 0.15
+  Kwiki: 0.30
   Template: 2.00
 no_index:
   directory:
