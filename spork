@@ -4,6 +4,7 @@ use warnings;
 use Spork;
 our $VERSION = '0.19';
 
+use lib 'lib';
 Spork->new->load_hub->command->process(@ARGV);
 
 __END__

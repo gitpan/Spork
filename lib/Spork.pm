@@ -1,12 +1,8 @@
 package Spork;
-our $VERSION = '0.19';
-use Spoon 0.21 -Base;
+our $VERSION = '0.20';
+use Spoon 0.22 -Base;
 
 const config_class => 'Spork::Config';
-
-sub load_hub {
-    super('config.yaml');
-}
 
 __END__
 

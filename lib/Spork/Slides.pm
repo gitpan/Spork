@@ -9,15 +9,9 @@ field slide_heading => '';
 field slide_index => [];
 field 'first_slide';
 field top_config => {};
-
-sub init {
-    $self->use_class('config');
-}
+field config => -init => '$self->hub->config';
 
 sub make_slides {
-    $self->use_class('formatter');
-    $self->use_class('template');
-    
     my @slides = $self->split_slides($self->config->slides_file);
     $self->first_slide($slides[0]);
     $self->config->add_config($slides[0]->{config});
@@ -34,11 +28,11 @@ sub make_slides {
           ? $self->make_link($slides[$i + 1]{slide_name}) : '';
         $self->slide_heading('');
         $self->image_url('');
-        my $parsed = $self->formatter->text_to_parsed($content);
+        my $parsed = $self->hub->formatter->text_to_parsed($content);
         my $html = $parsed->to_html;
         $slide->{slide_heading} = $self->slide_heading;
         $slide->{image_html} = $self->get_image_html;
-        my $output = $self->template->process('slide.html',
+        my $output = $self->hub->template->process('slide.html',
             %$slide,
             hub => $self->hub,
             index_slide => 'index.html',
@@ -62,7 +56,7 @@ sub make_link {
 }
 
 sub make_index {
-    my $output = $self->template->process('index.html',
+    my $output = $self->hub->template->process('index.html',
         %{$self->top_config},
         slides => $self->slide_index,
         spork_version => "Spork v$Spork::VERSION",
@@ -73,7 +67,7 @@ sub make_index {
 }
 
 sub make_start {
-    my $output = $self->template->process('start.html',
+    my $output = $self->hub->template->process('start.html',
         spork_version => "Spork v$Spork::VERSION",
         index_slide => 'index.html',
         next_slide => $self->first_slide->{slide_name},
@@ -106,6 +100,7 @@ sub split_slides {
                 slide_name => "slide$slide_num$sub_num.html",
                 last => @sub_slides ? 0 : 1,
                 config => $config,
+                sub_num => $sub_num
             };
             $config = {};
             push @slide_info, $slide_info;

@@ -8,7 +8,8 @@ version_from('lib/Spork.pm');
 
 requires(qw(
     perl 5.6.1
-    Kwiki 0.37
+    Kwiki 0.38
+    Spoon 0.22
 ));
 
 clean_files('t/spork');

@@ -1,22 +1,32 @@
 package Spork::Command;
 use Spork -Base;
 
-sub boolean_arguments { qw( -new -make -start) }
+sub boolean_arguments { qw( -new -make -start -compress) }
 sub process {
-    my $args = $self->parse_arguments(@_);
+    $self->call_handler(@_);
+    $self->hub->remove_hooks;
+}
+
+sub call_handler {
+    my ($args,@others) = $self->parse_arguments(@_);
     return $self->new_spork if $args->{-new};
     return $self->make_spork if $args->{-make};
     return $self->start_spork if $args->{-start};
+    return $self->handle_compress(@others) if $args->{-compress};
     return $self->usage;
+}
+
+sub handle_compress {
+    eval q{use mixin 'Spoon::Installer'};
+    $self->compress_lib(@_);
 }
 
 sub new_spork {
     my @files = io('.')->all;
     die "Can't make new spork in a non-empty directory\n"
       if @files;
-    $self->use_class('slides');
     warn "Extracting sample slideshow: Spork.slides...\n";
-    $self->slides->extract_files;
+    $self->hub->slides->extract_files;
     warn "Extracting sample configuration file: config.yaml...\n";
     $self->hub->config->extract_files;
     warn "Done. Now edit these files and run 'spork -make'.\n\n"
@@ -24,10 +34,9 @@ sub new_spork {
 
 sub make_spork {
     $self->assert_registry;
-    $self->use_class('template');
-    unless (-e $self->template->extract_to) {
+    unless (-e $self->hub->template->extract_to) {
         warn "Extracting template files...\n";
-        $self->template->extract_files;
+        $self->hub->template->extract_files;
     }
     {
         use Cwd;
@@ -42,9 +51,8 @@ sub make_spork {
         }
         chdir $home;
     }
-    $self->use_class('slides');
     warn "Creating slides...\n";
-    $self->slides->make_slides;
+    $self->hub->slides->make_slides;
     warn "Slideshow created! Now run try running 'spork -start'.\n\n";
 }
 
@@ -70,7 +78,7 @@ sub assert_registry {
         no warnings;
         *Kwiki::Plugin::init = sub {};
     }
-    $self->hub->registry->load_dynamic;
+    $self->hub->registry->load;
 }
 
 __END__

@@ -18,6 +18,7 @@ Spork->new->load_hub->command->process('-new');
 
 ok(-f 'Spork.slides');
 
+$ENV{HOME} = undef;
 Spork->new->load_hub->command->process('-make');
 
 ok(-f 'slides/index.html');

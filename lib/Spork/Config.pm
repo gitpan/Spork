@@ -1,5 +1,5 @@
 package Spork::Config;
-use Kwiki::Config -base;
+use Kwiki::Config -Base;
 use mixin 'Spoon::Installer';
 
 const class_id => 'config';
@@ -30,6 +30,7 @@ sub default_classes {
         template_class => 'Spork::Template::TT2',
         command_class => 'Spork::Command',
         slides_class => 'Spork::Slides',
+        hooks_class => 'Spoon::Hooks',
         # For Kwiki Plugins:
         cgi_class => 'Kwiki::CGI',
         pages_class => 'Kwiki::Pages',
@@ -203,7 +204,7 @@ __config.yaml__
 author_name: Brian Ingerson
 author_email: ingy@cpan.org
 author_webpage: http://search.cpan.org/~ingy/
-copyright_string: Copyright &copy; 2004 Brian Ingerson
+copyright_string: Copyright &copy; 2005 Brian Ingerson
 
 banner_bgcolor: hotpink
 show_controls: 1
@@ -226,8 +227,15 @@ link_index: Index
 
 start_command: open slides/start.html
 
-template_class: Spork::Template::TT2
-formatter_class: Spork::Formatter
+# Change core classes here:
+# formatter_class: Spork::Formatter::Kwid
 
+# Set plugin classes here:
 # plugin_classes:
-# - Kwiki::PerlMode
+# - Spork::S5
+# - Spork::S5Theme
+# - Spork::S5ThemeFlower
+# - Spork::S5ThemeBlackday
+# - Kwiki::PerlBlocks
+
+__plugins__
